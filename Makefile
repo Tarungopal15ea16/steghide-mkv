@@ -17,6 +17,34 @@ venv: check
 	@sudo $(PYTHON) -m venv $(VENV_DIR)
 
 deps: venv
+	@echo "[*] Installing steghide..."
+	@if command -v apt-get >/dev/null 2>&1; then \
+		echo "  -> Detected Debian/Ubuntu (apt)"; \
+		sudo apt-get update -qq && sudo apt-get install -y steghide; \
+	elif command -v dnf >/dev/null 2>&1; then \
+		echo "  -> Detected Fedora/RHEL (dnf)"; \
+		sudo dnf install -y steghide; \
+	elif command -v yum >/dev/null 2>&1; then \
+		echo "  -> Detected CentOS/RHEL (yum)"; \
+		sudo yum install -y steghide; \
+	elif command -v pacman >/dev/null 2>&1; then \
+		echo "  -> Detected Arch Linux (pacman)"; \
+		sudo pacman -Sy --noconfirm steghide; \
+	elif command -v zypper >/dev/null 2>&1; then \
+		echo "  -> Detected openSUSE (zypper)"; \
+		sudo zypper install -y steghide; \
+	elif command -v apk >/dev/null 2>&1; then \
+		echo "  -> Detected Alpine Linux (apk)"; \
+		sudo apk add --no-cache steghide; \
+	elif command -v brew >/dev/null 2>&1; then \
+		echo "  -> Detected macOS (brew)"; \
+		brew install steghide; \
+	else \
+		echo "ERROR: Could not detect a supported package manager."; \
+		echo "Please install steghide manually and re-run make."; \
+		exit 1; \
+	fi
+
 	@echo "[*] Installing Python dependencies..."
 	@sudo $(VENV_DIR)/bin/pip install --upgrade pip
 	@sudo $(VENV_DIR)/bin/pip install \
