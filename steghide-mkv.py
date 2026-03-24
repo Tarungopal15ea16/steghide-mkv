@@ -30,7 +30,7 @@ def credentials(Name, extension):
     fs, path = tempfile.mkstemp(prefix="credentials_", suffix=".txt")
     os.close(fs)
     with open(path, "w") as cred:
-        cred.write(f"{password}\n{extension}")
+        cred.write(f"{Name}\n{extension}")
     return path
 
 def embid(temp_files, main_file, video, frames, password,name):

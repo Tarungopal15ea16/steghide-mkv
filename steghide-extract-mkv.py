@@ -20,7 +20,7 @@ def first_frame(video,password):
 
     if not ret:
         print("Error: Could not read the first frame.")
-        return  None
+        return  None,None
 
     with tempfile.TemporaryDirectory() as tmpdir:
         bmp_path = os.path.join(tmpdir, "first_frame.bmp")
@@ -35,23 +35,23 @@ def first_frame(video,password):
             
             if result.returncode != 0:
                 print(f"Steghide extraction failed: {result.stderr}")
-                return None None
+                return None,None
             if os.path.exists(txt_path):
                 with open(txt_path, "r") as f:
                     lines = f.readlines()
                     var1 = lines[0].strip() if len(lines) > 0 else None
                     var2 = lines[1].strip() if len(lines) > 1 else None
                     
-                    return var2 var1
+                    return var2,var1
                 os.remove(txt_path)
                 os.remove(bmp_path)
             else:
-                print("Extraction command reported success, but file was not found")
-                return None None 
+                print("Extraction command reported success, but file was not found ")
+                return None,None 
 
         except Exception as e:
             print(f"An error occurred during extraction: {e}")
-            return None None 
+            return None,None 
 
 def extract_all(video, password, extension,name):
     cap = cv2.VideoCapture(video)
@@ -131,7 +131,7 @@ if len(sys.argv) > 1 and len(sys.argv) < 4 :
     else:
         password = getpass.getpass("Enter Password to Decrypt:")
         extension,Name = first_frame(sys.argv[1],password)
-        if extension or Name is None:  
+        if extension is None or Name is None:  
             print("Incorrect password or File is corrupted")
         else:
             if name != "Extracted":
